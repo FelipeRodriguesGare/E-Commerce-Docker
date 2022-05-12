@@ -9,7 +9,6 @@ services:
     environment:
       - SPRINGR_DATA_MONGODB_URI=mongodb+srv://vitorgzillig:LZXNV6mqBW6WBOil@cluster.yzliv.mongodb.net/test
       - SPRING_DATA_MONGODB_DATABASE=E-Commerce
-      - SERVER_PORT=8080
 
   produto-service:
     image: produto:1.0
@@ -44,7 +43,7 @@ services:
       - produto-service
       - kafka
     environment:
-      - SPRING_KAFKA_BOOTSTRAP-SERVERS=kafka
+      - SPRING_KAFKA_BOOTSTRAP-SERVERS=kafka:9092
       - AUTH_ENDERECO=http://auth-server
       - AUTH_PORTA=8083
       - PRODUTO_ENDERECO=http://produto-service
