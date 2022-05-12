@@ -1,0 +1,55 @@
+version: "2.2"
+services:
+  auth-server:
+    image: user:1.0
+    ports:
+      - "8083:8083"
+    networks:
+      - e-commerce
+    environment:
+      - SPRINGR_DATA_MONGODB_URI=mongodb+srv://vitorgzillig:LZXNV6mqBW6WBOil@cluster.yzliv.mongodb.net/test
+      - SPRING_DATA_MONGODB_DATABASE=E-Commerce
+      - SERVER_PORT=8080
+
+  produto-service:
+    image: produto:1.0
+    ports:
+      - "8081:8081"
+    networks:
+      - e-commerce
+    depends_on:
+      - auth-server
+    environment:
+      - AUTH_ENDERECO=http://auth-server
+      - AUTH_PORTA=8083
+
+  zookeeper:
+    image: 'bitnami/zookeeper:latest'
+    networks:
+      - e-commerce
+
+  kafka:
+    image: 'bitnami/kafka:latest'
+    networks:
+      - e-commerce
+
+  compra-service:
+    image: compra:1.0
+    ports:
+      - "8082:8082"
+    networks:
+      - e-commerce
+    depends_on:
+      - auth-server
+      - produto-service
+      - kafka
+    environment:
+      - SPRING_KAFKA_BOOTSTRAP-SERVERS=kafka
+      - AUTH_ENDERECO=http://auth-server
+      - AUTH_PORTA=8083
+      - PRODUTO_ENDERECO=http://produto-service
+      - PRODUTO_PORTA=8082
+
+networks:
+  e-commerce:
+    driver: bridge
