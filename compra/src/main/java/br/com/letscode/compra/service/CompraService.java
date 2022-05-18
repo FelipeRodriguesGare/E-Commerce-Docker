@@ -23,7 +23,6 @@ public class CompraService {
 
     private final CompraRepository compraRepository;
     private final SendKafkaMessage sendKafkaMessage;
-    private final ProdutoService produtoService;
 
     public Page<CompraResponse> listCompra(Compra compra) {
         ExampleMatcher matcher = ExampleMatcher.matching()

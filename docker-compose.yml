@@ -23,17 +23,34 @@ services:
       - AUTH_PORTA=8083
 
   zookeeper:
-    image: 'bitnami/zookeeper:latest'
+    image: confluentinc/cp-zookeeper:7.0.1
     networks:
       - e-commerce
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
 
   kafka:
-    image: 'bitnami/kafka:latest'
+    image: confluentinc/cp-kafka:7.0.1
+    container_name: kafka
     networks:
       - e-commerce
-
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_INTERNAL://localhost:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      
   compra-service:
-    image: compra:1.0
+    image: compra:1.1
     ports:
       - "8082:8082"
     networks:
@@ -43,11 +60,11 @@ services:
       - produto-service
       - kafka
     environment:
-      - SPRING_KAFKA_BOOTSTRAP-SERVERS=kafka:9092
       - AUTH_ENDERECO=http://auth-server
       - AUTH_PORTA=8083
       - PRODUTO_ENDERECO=http://produto-service
-      - PRODUTO_PORTA=8082
+      - PRODUTO_PORTA=8081
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=http://kafka:9092
 
 networks:
   e-commerce:

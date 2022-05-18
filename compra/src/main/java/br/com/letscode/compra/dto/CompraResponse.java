@@ -2,6 +2,7 @@ package br.com.letscode.compra.dto;
 
 import br.com.letscode.compra.model.Compra;
 import br.com.letscode.compra.model.Produto;
+import br.com.letscode.compra.model.ProdutoComprado;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,7 @@ public class CompraResponse {
     private String cpf_cliente;
     private Double valor_total_compra;
     private String status;
-    private List<Produto> produtos = new ArrayList<>();
+    private List<ProdutoComprado> produtos = new ArrayList<>();
 
     public static CompraResponse convert(Compra compra){
         CompraResponse compraReturn = new CompraResponse();

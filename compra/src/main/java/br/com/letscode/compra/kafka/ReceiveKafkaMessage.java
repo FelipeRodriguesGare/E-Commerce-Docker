@@ -21,6 +21,7 @@ import java.util.Objects;
 public class ReceiveKafkaMessage {
 
     private final CompraRepository compraRepository;
+    private final ProdutoService produtoService;
 
 
     @KafkaListener(topics = "topic-compra", groupId = "grupo-1")

@@ -14,13 +14,22 @@ import reactor.core.publisher.Mono;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class ProdutoService {
 
-    @Value("${produto.endereco}")
     private static String HOST;
 
-    @Value("${produto.porta}")
     private static String PORT;
+
+    @Value("${produto.endereco}")
+    public void setHost(String host){
+        ProdutoService.HOST = host;
+    }
+
+    @Value("${produto.porta}")
+    public void setPort(String port){
+        ProdutoService.PORT = port;
+    }
 
     public static Produto getProduct(Map.Entry<String,Integer> entry, String token) throws BadRequest {
         WebClient client = WebClient.create(ProdutoService.HOST+":"+ProdutoService.PORT);
