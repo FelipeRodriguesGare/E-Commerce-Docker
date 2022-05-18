@@ -9,9 +9,10 @@ import br.com.letscode.produto.model.Produto;
 import br.com.letscode.produto.service.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 import java.util.Map;
@@ -25,20 +26,24 @@ public class ProdutoController {
 
     @GetMapping
     @Authenticate
-    public ResponseEntity<Object> getAll(Produto produto) throws NotFound {
-        return ResponseEntity.ok(produtoService.listByCodigo(produto));
+    @ResponseStatus(HttpStatus.OK)
+    public Flux<ProdutoResponse> getAll(Produto produto) throws NotFound {
+        return produtoService.listTodos(produto);
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     @Authenticate
-    public ResponseEntity<ProdutoResponse> createProduct(@RequestBody @Valid ProdutoRequest produtoRequest) {
-        return ResponseEntity.ok(produtoService.createProduct(produtoRequest));
+    public Mono<ProdutoResponse> createProduct(@RequestBody @Valid ProdutoRequest produtoRequest) {
+        return produtoService.createProduct(produtoRequest);
     }
 
     @GetMapping("/{id}")
     @Authenticate
-    public Produto getProduct(@PathVariable String id) throws NotFound {
-        return produtoService.findByCodigo(id).orElseThrow(()->new NotFound("Produto não encontrado."));
+    @ResponseStatus(HttpStatus.OK)
+    public Mono<ProdutoResponse> getProduct(@PathVariable String id) throws NotFound {
+        return produtoService.findByCodigo(id)
+                .switchIfEmpty(Mono.error(new NotFound("Produto não encontrado")));
     }
 
     @PatchMapping
