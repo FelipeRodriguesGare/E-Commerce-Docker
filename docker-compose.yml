@@ -1,7 +1,7 @@
-version: "2.2"
+version: "3.0"
 services:
   auth-server:
-    image: user:1.0
+    image: user:latest
     ports:
       - "8083:8083"
     networks:
@@ -9,9 +9,10 @@ services:
     environment:
       - SPRINGR_DATA_MONGODB_URI=mongodb+srv://vitorgzillig:LZXNV6mqBW6WBOil@cluster.yzliv.mongodb.net/test
       - SPRING_DATA_MONGODB_DATABASE=E-Commerce
+      - MANAGEMENT_SERVER_PORT=8080
 
   produto-service:
-    image: produto:1.1
+    image: produto:latest
     ports:
       - "8081:8081"
     networks:
@@ -21,6 +22,7 @@ services:
     environment:
       - SPRINGR_DATA_MONGODB_URI=mongodb+srv://vitorgzillig:LZXNV6mqBW6WBOil@cluster.yzliv.mongodb.net/test
       - SPRING_DATA_MONGODB_DATABASE=E-Commerce
+      - MANAGEMENT_SERVER_PORT=8080
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.0.1
@@ -50,7 +52,7 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       
   compra-service:
-    image: compra:1.1
+    image: compra:latest
     ports:
       - "8082:8082"
     networks:
@@ -67,7 +69,38 @@ services:
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=http://kafka:9092
       - SPRINGR_DATA_MONGODB_URI=mongodb+srv://vitorgzillig:LZXNV6mqBW6WBOil@cluster.yzliv.mongodb.net/test
       - SPRING_DATA_MONGODB_DATABASE=E-Commerce
+      - MANAGEMENT_SERVER_PORT=8080
+
+  prometheus:
+    image: prom/prometheus:v2.35.0
+    depends_on:
+      - compra-service
+      - produto-service
+      - auth-server
+    networks:
+      - e-commerce
+    ports:
+      - "9090:9090"
+    restart: always
+    volumes:
+      - ./config:/etc/prometheus
+      - prometheus-data:/prometheus
+    command: --config.file=/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+    ports:
+      - "3000:3000"
+    networks:
+      - e-commerce
 
 networks:
   e-commerce:
     driver: bridge
+
+volumes:
+  prometheus-data:
