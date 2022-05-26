@@ -70,6 +70,8 @@ services:
       - SPRINGR_DATA_MONGODB_URI=mongodb+srv://vitorgzillig:LZXNV6mqBW6WBOil@cluster.yzliv.mongodb.net/test
       - SPRING_DATA_MONGODB_DATABASE=E-Commerce
       - MANAGEMENT_SERVER_PORT=8080
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka
+      - SPRINT_APPLICATION_NAME=compra-service
 
   prometheus:
     image: prom/prometheus:v2.35.0
@@ -95,6 +97,13 @@ services:
       - prometheus
     ports:
       - "3000:3000"
+    networks:
+      - e-commerce
+
+  eureka:
+    image: eureka
+    ports:
+      - "8761:8761"
     networks:
       - e-commerce
 
