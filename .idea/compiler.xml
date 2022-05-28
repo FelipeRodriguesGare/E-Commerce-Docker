@@ -7,21 +7,29 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="compra" />
         <module name="produto" />
         <module name="user" />
-        <module name="compra" />
+        <module name="eureka-server" />
+        <module name="gateway" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="compra" target="11" />
+      <module name="eureka-server" target="11" />
+      <module name="gateway" target="11" />
       <module name="produto" target="11" />
+      <module name="produto (1)" target="11" />
       <module name="user" target="11" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="compra" options="-parameters" />
+      <module name="eureka-server" options="-parameters" />
+      <module name="gateway" options="-parameters" />
       <module name="produto" options="-parameters" />
+      <module name="produto (1)" options="-parameters" />
       <module name="user" options="-parameters" />
     </option>
   </component>

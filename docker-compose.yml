@@ -1,9 +1,12 @@
 version: "3.0"
 services:
+  eureka:
+    image: eureka:latest
+    networks:
+      - e-commerce
+
   auth-server:
     image: user:latest
-    ports:
-      - "8083:8083"
     networks:
       - e-commerce
     environment:
@@ -13,8 +16,6 @@ services:
 
   produto-service:
     image: produto:latest
-    ports:
-      - "8081:8081"
     networks:
       - e-commerce
     depends_on:
@@ -38,8 +39,6 @@ services:
     container_name: kafka
     networks:
       - e-commerce
-    ports:
-      - "9092:9092"
     depends_on:
       - zookeeper
     environment:
@@ -53,8 +52,6 @@ services:
       
   compra-service:
     image: compra:latest
-    ports:
-      - "8082:8082"
     networks:
       - e-commerce
     depends_on:
@@ -81,8 +78,6 @@ services:
       - auth-server
     networks:
       - e-commerce
-    ports:
-      - "9090:9090"
     restart: always
     volumes:
       - ./config:/etc/prometheus
@@ -100,10 +95,10 @@ services:
     networks:
       - e-commerce
 
-  eureka:
-    image: eureka
+  gateway:
+    image: gateway:latest
     ports:
-      - "8761:8761"
+      - "9995:8080"
     networks:
       - e-commerce
 

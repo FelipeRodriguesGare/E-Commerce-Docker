@@ -1,0 +1,51 @@
+server:
+  port: 9995
+
+management:
+  port: 9995
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    gateway:
+      enabled: true
+    metrics:
+      enabled: true
+    health:
+      show-details: always
+  info:
+    env:
+      enabled: true
+
+spring:
+  application:
+    name: gateway-app
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: PRODUTO-SERVICE
+          uri: lb://PRODUTO-SERVICE
+          predicates:
+            - Path=/produto/**
+          filters:
+            - RewritePath=/produto/(?<path>.*), /$\{path}
+
+        - id: COMPRA-SERVICE
+          uri: lb://COMPRA-SERVICE
+          predicates:
+            - Path=/compra/**
+          filters:
+            - RewritePath=/compra/(?<path>.*), /$\{path}
+  security:
+    user:
+      name: admin
+      password: admin
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka

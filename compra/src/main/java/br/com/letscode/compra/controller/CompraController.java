@@ -1,6 +1,5 @@
 package br.com.letscode.compra.controller;
 
-import br.com.letscode.compra.annotation.Authenticate;
 import br.com.letscode.compra.dto.CompraRequest;
 import br.com.letscode.compra.dto.KafkaDTO;
 import br.com.letscode.compra.exceptions.BadRequest;
@@ -25,14 +24,12 @@ public class CompraController {
 
 
     @GetMapping()
-    @Authenticate
     public ResponseEntity<Object> listCompras(Compra compra) throws NotFound {
         return ResponseEntity.ok(compraService.listCompra(compra));
     }
 
     @PostMapping()
     @ResponseStatus(HttpStatus.OK)
-    @Authenticate
     public void createProduct(@RequestBody @Valid CompraRequest compraRequest, BindingResult bindingResult, HttpServletRequest request) throws BadRequest {
         if(bindingResult.hasErrors()){
             throw new BadRequest("O campo " + bindingResult.getFieldError().getField() + " deve ser preenchido.");
