@@ -7,7 +7,7 @@ import br.com.letscode.compra.model.Compra;
 import br.com.letscode.compra.model.Produto;
 import br.com.letscode.compra.model.ProdutoComprado;
 import br.com.letscode.compra.repository.CompraRepository;
-import br.com.letscode.compra.service.ProdutoService;
+import br.com.letscode.compra.service.ProdutoAPI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
@@ -21,17 +21,17 @@ import java.util.Objects;
 public class ReceiveKafkaMessage {
 
     private final CompraRepository compraRepository;
-    private final ProdutoService produtoService;
+    private final ProdutoAPI produtoApi;
 
 
     @KafkaListener(topics = "topic-compra", groupId = "grupo-1")
-    public void listenTopicCreateCompra(KafkaDTO kafkaDTO) throws BadRequest {
+    public void listenTopicCreateCompra(KafkaDTO kafkaDTO) {
         int count = 0;
         CompraRequest compraRequest = kafkaDTO.getCompraRequest();
         List<Compra> compraList = compraRepository.findByCpf(compraRequest.getCpf());
         Compra compra = compraList.get(compraList.size()-1);
         for (Map.Entry<String, Integer> entry : compraRequest.getProdutos().entrySet()) {
-            Produto produto = ProdutoService.getProduct(entry, kafkaDTO.getToken());
+            Produto produto = produtoApi.getProduct(entry.getKey());
             if (produto.getQtde_disponivel() < entry.getValue()) {
                 compra.getProdutos().get(count).setStatusProduto("Estoque insuficiente");
             } else {
@@ -42,7 +42,7 @@ public class ReceiveKafkaMessage {
         compraRepository.save(compra);
         if(checkStatus(compra)){
             for (Map.Entry<String, Integer> entry : compraRequest.getProdutos().entrySet()) {
-                ProdutoService.updateQuantity(entry, kafkaDTO.getToken());
+                produtoApi.updateQuantity(entry);
             }
             compra.setStatus("CONCLUIDO");
         }else{

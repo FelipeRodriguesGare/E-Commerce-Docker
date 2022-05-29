@@ -41,7 +41,7 @@ public class ProdutoController {
                 .switchIfEmpty(Mono.error(new NotFound("Produto não encontrado")));
     }
 
-    @PatchMapping
+    @PutMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void updateQuantity(@RequestBody Map.Entry<String, Integer> produtos) throws BadRequest, NotFound {
         produtoService.updateQuantity(produtos);

@@ -2,9 +2,6 @@ package br.com.letscode.compra.model;
 
 import lombok.*;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
@@ -18,9 +15,4 @@ public class Produto {
     private Double preco;
     private Integer qtde_disponivel;
 
-    public Produto(String codigo, String nome, Double preco) {
-        this.codigo = codigo;
-        this.nome = nome;
-        this.preco = preco;
-    }
 }

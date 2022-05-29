@@ -13,6 +13,8 @@ services:
       - SPRINGR_DATA_MONGODB_URI=mongodb+srv://vitorgzillig:LZXNV6mqBW6WBOil@cluster.yzliv.mongodb.net/test
       - SPRING_DATA_MONGODB_DATABASE=E-Commerce
       - MANAGEMENT_SERVER_PORT=8080
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka
+      - SPRINT_APPLICATION_NAME=user-service
 
   produto-service:
     image: produto:latest
@@ -24,6 +26,8 @@ services:
       - SPRINGR_DATA_MONGODB_URI=mongodb+srv://vitorgzillig:LZXNV6mqBW6WBOil@cluster.yzliv.mongodb.net/test
       - SPRING_DATA_MONGODB_DATABASE=E-Commerce
       - MANAGEMENT_SERVER_PORT=8080
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka
+      - SPRINT_APPLICATION_NAME=produto-service
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.0.1
@@ -59,10 +63,6 @@ services:
       - produto-service
       - kafka
     environment:
-      - AUTH_ENDERECO=http://auth-server
-      - AUTH_PORTA=8083
-      - PRODUTO_ENDERECO=http://produto-service
-      - PRODUTO_PORTA=8081
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=http://kafka:9092
       - SPRINGR_DATA_MONGODB_URI=mongodb+srv://vitorgzillig:LZXNV6mqBW6WBOil@cluster.yzliv.mongodb.net/test
       - SPRING_DATA_MONGODB_DATABASE=E-Commerce

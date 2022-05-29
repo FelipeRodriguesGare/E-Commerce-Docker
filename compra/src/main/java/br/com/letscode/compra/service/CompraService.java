@@ -23,6 +23,7 @@ public class CompraService {
 
     private final CompraRepository compraRepository;
     private final SendKafkaMessage sendKafkaMessage;
+    private final ProdutoAPI produtoApi;
 
     public Page<CompraResponse> listCompra(Compra compra) {
         ExampleMatcher matcher = ExampleMatcher.matching()
@@ -44,7 +45,7 @@ public class CompraService {
         int qtdeItens = compraRequest.getProdutos().size();
         int qtdeComparacao = 0;
         for (Map.Entry<String,Integer> entry : compraRequest.getProdutos().entrySet()){
-            Produto produto = ProdutoService.getProduct(entry, token);
+            Produto produto = produtoApi.getProduct(entry.getKey());
             if (produto!=null){
                 qtdeComparacao++;
             }
@@ -64,7 +65,7 @@ public class CompraService {
                 compra.setStatus("EM PROCESSAMENTO");
                 compra.setValor_total_compra(0.0);
                 for (Map.Entry<String,Integer> entry : compraRequest.getProdutos().entrySet()){
-                    Produto produto = ProdutoService.getProduct(entry, kafkaDTO.getToken());
+                    Produto produto = produtoApi.getProduct(entry.getKey());
                     ProdutoComprado produtoComprado = new ProdutoComprado(produto.getCodigo(),produto.getNome(),produto.getPreco(),compraRequest.getProdutos().get(entry.getKey()));
                     compra.getProdutos().add(produtoComprado);
                     sum_values += produto.getPreco()*entry.getValue();
@@ -75,7 +76,6 @@ public class CompraService {
 
                 sendKafkaMessage.sendMessage(kafkaDTO);
                 compraRepository.save(compra);
-
 
             }else{
                 throw new BadRequest("Codigo do produto invalido.");
