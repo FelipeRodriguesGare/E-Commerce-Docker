@@ -40,10 +40,20 @@ spring:
             - Path=/compra/**
           filters:
             - RewritePath=/compra/(?<path>.*), /$\{path}
+
   security:
-    user:
-      name: admin
-      password: admin
+    oauth2:
+      client:
+        provider:
+          my-keycloak-provider:
+            issuer-uri: http://localhost:8089/auth/realms/SpringBootKeycloak
+        registration:
+          keycloak-spring-gateway-client:
+            provider: my-keycloak-provider
+            client-id: login-app
+            client-secret: 511952d8-179c-4869-8661-e8d4352f97fb
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
 
 eureka:
   client:

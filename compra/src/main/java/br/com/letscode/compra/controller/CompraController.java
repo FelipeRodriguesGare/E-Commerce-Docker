@@ -6,7 +6,7 @@ import br.com.letscode.compra.exceptions.BadRequest;
 import br.com.letscode.compra.exceptions.NotFound;
 import br.com.letscode.compra.model.Compra;
 import br.com.letscode.compra.service.CompraService;
-import br.com.letscode.compra.service.ProdutoAPI;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,6 +30,7 @@ public class CompraController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.OK)
+    @CircuitBreaker(name = "communicate-with-error")
     public void createProduct(@RequestBody @Valid CompraRequest compraRequest, BindingResult bindingResult, HttpServletRequest request) throws BadRequest {
         if(bindingResult.hasErrors()){
             throw new BadRequest("O campo " + bindingResult.getFieldError().getField() + " deve ser preenchido.");
